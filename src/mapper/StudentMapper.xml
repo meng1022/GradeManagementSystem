@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dao.StudentMapper">
+  <resultMap id="StudentInfotMap" type="po.StudentInfo" >
+    <result column="studentid" property="studentid" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="classno" property="classno" jdbcType="INTEGER" />
+    <result column="gender" property="gender" jdbcType="VARCHAR" />
+    <result column="department" property="department" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="StudentCourseInfoMap" type="po.StudentCourseInfo" >
+    <result column="studentid" property="studentid" jdbcType="INTEGER" />
+    <result column="courseid" property="courseid" jdbcType="INTEGER" />
+    <result column="teachername" property="teachername" jdbcType="VARCHAR" />
+    <result column="courseplace" property="courseplace" jdbcType="VARCHAR" />
+    <result column="weektime" property="weektime" jdbcType="VARCHAR" />
+    <result column="coursename" property="coursename" jdbcType="VARCHAR" />
+    <result column="day" property="day" jdbcType="VARCHAR" />
+    <result column="jieci" property="jieci" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="StudentScoreInfoMap" type="po.StudentScoreInfo" >
+    <result column="courseid" property="courseid" jdbcType="INTEGER" />
+    <result column="coursename" property="coursename" jdbcType="VARCHAR" />
+    <result column="score" property="score" jdbcType="INTEGER" />
+  </resultMap>
+  
+  
+	<select id="personal" resultType="po.StudentInfo">
+		select * from studentinfo,classinfo
+		where studentid=#{accountid}
+			and studentinfo.classno=classinfo.classno
+	</select>
+	
+	<select id="studentcourse" resultType="po.StudentCourseInfo">
+		select studentid,courseinfo.courseid,teachername,courseplace,weektime,coursename,day,jieci
+		from teacherinfo,studentcourse,courseinfo
+		where teacherinfo.teacherid=courseinfo.teacherid
+		and studentcourse.courseid = courseinfo.courseid
+		and studentid = #{accountid}
+	</select>
+	
+	<select id="studentscore" resultType="po.StudentScoreInfo">
+		select DISTINCT(courseinfo.courseid),coursename,score
+		from teacherinfo,studentcourse,courseinfo
+		where teacherinfo.teacherid=courseinfo.teacherid
+		and studentcourse.courseid = courseinfo.courseid
+		and studentid = #{accountid}
+	</select>
+</mapper>

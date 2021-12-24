@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="dao.TeacherMapper">
+  <resultMap id="TeacherInfotMap" type="po.TeacherInfo" >
+    <result column="teacherid" property="teacherid" jdbcType="INTEGER" />
+    <result column="teachername" property="teachername" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="gender" property="gender" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="department" property="department" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="TeacherCourseInfoMap" type="po.TeacherCourseInfo" >
+    <result column="teacherid" property="teacherid" jdbcType="INTEGER" />
+    <result column="courseid" property="courseid" jdbcType="INTEGER" />
+    <result column="courseplace" property="courseplace" jdbcType="VARCHAR" />
+    <result column="weektime" property="weektime" jdbcType="VARCHAR" />
+    <result column="coursename" property="coursename" jdbcType="VARCHAR" />
+    <result column="day" property="day" jdbcType="VARCHAR" />
+    <result column="jieci" property="jieci" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="TeacherScoreInfoMap" type="po.TeacherScoreInfo" >
+    <result column="courseid" property="courseid" jdbcType="INTEGER" />
+    <result column="coursename" property="coursename" jdbcType="VARCHAR" />
+    <result column="studentid" property="studentid" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="teacherid" property="teacherid" jdbcType="INTEGER" />
+  </resultMap>
+  
+<resultMap id="RankScoreMap" type="po.RankScore" >
+    <result column="a" property="a" jdbcType="INTEGER" />
+    <result column="b" property="b" jdbcType="INTEGER" />
+    <result column="c" property="studentid" jdbcType="INTEGER" />
+    <result column="d" property="name" jdbcType="INTEGER" />
+    <result column="e" property="score" jdbcType="INTEGER" />
+  </resultMap>
+  
+  
+	<select id="personal" resultType="po.TeacherInfo">
+		select * from teacherinfo
+		where teacherid=#{accountid}
+	</select>
+	
+	<select id="teachercourse" resultType="po.TeacherCourseInfo">
+		select courseplace,weektime,coursename,day,jieci,courseid
+		from courseinfo
+		where teacherid = #{accountid}
+	</select>
+	
+	<select id="teacherscore" resultType="po.TeacherScoreInfo">
+		select teacherid,courseinfo.courseid,coursename,studentinfo.studentid,name,score
+		from studentcourse,courseinfo,studentinfo
+		where studentcourse.courseid = courseinfo.courseid
+		and studentinfo.studentid = studentcourse.studentid
+		and teacherid = #{accountid}
+	</select>
+	
+	<select id="showscore" resultType="po.TeacherScoreInfo">
+		select teacherid,courseinfo.courseid,coursename,studentinfo.studentid,name,score
+		from studentcourse,courseinfo,studentinfo
+		where studentcourse.courseid = courseinfo.courseid
+		and studentinfo.studentid = studentcourse.studentid
+		and courseinfo.courseid=#{courseid}
+		and studentinfo.studentid=#{studentid}
+		and teacherid = #{teacherid}
+	</select>
+	
+	<update id="modifyscore">
+		update studentcourse 
+		set score = #{score}
+		where studentid= #{studentid}
+		and courseid = #{courseid}
+	</update>
+	
+	<delete id="deletescore">
+		delete from studentcourse
+		where courseid=#{courseid}
+		and studentid=#{studentid}
+	</delete>
+	
+	<select id="teachercourseexist" resultType="java.lang.Integer">
+		select count(1)
+		from courseinfo
+		where teacherid=#{teacherid}
+		and courseid=#{courseid}
+	</select>
+	
+	<select id="scoreexist" resultType="java.lang.Integer">
+		select count(1)
+		from studentcourse
+		where courseid=#{courseid}
+		and studentid=#{studentid}
+	</select>
+	
+	<insert id="addscore">
+		insert into studentcourse
+		value(#{studentid},#{courseid},#{score})
+	</insert>
+	
+	<select id="scoreexist1" resultType="java.lang.Integer">
+		select count(1)
+		from courseinfo,studentcourse
+		where teacherid = #{teacherid}
+		and studentid = #{studentid}
+	</select>
+	
+	<select id="scoreexist2" resultType="java.lang.Integer">
+		select count(1)
+		from courseinfo,studentcourse
+		where courseinfo.courseid=#{courseid}
+		and teacherid= #{teacherid}
+	</select>
+	
+	<select id="searchscore1" resultType="po.TeacherScoreInfo">
+		select teacherid,courseinfo.courseid,coursename,studentinfo.studentid,name,score
+		from courseinfo,studentcourse,studentinfo
+		where courseinfo.courseid = studentcourse.courseid
+		and studentinfo.studentid = studentcourse.studentid
+		and teacherid = #{teacherid}
+		and courseinfo.courseid = #{courseid}
+	</select>
+	
+	<select id="searchscore2" resultType="po.TeacherScoreInfo">
+		select teacherid,courseinfo.courseid,coursename,studentinfo.studentid,name,score
+		from courseinfo,studentcourse,studentinfo
+		where courseinfo.courseid = studentcourse.courseid
+		and studentinfo.studentid = studentcourse.studentid
+		and teacherid = #{teacherid}
+		and studentinfo.studentid = #{studentid}
+	</select>
+	
+	<select id="searchscore3" resultType="po.TeacherScoreInfo">
+		select teacherid,courseinfo.courseid,coursename,studentinfo.studentid,name,score
+		from courseinfo,studentcourse,studentinfo
+		where courseinfo.courseid = studentcourse.courseid
+		and studentinfo.studentid = studentcourse.studentid
+		and courseinfo.courseid = #{courseid}
+		and studentinfo.studentid = #{studentid}
+	</select>
+	
+	<select id="rankscore" resultType="po.RankScore">
+		select sum(case when score between 90 and 100 then 1 else 0 end) as a,
+			sum(case when score between 80 and 89 then 1 else 0 end) as b,
+			sum(case when score between 70 and 79 then 1 else 0 end) as c,
+			sum(case when score between 60 and 69 then 1 else 0 end) as d,
+			sum(case when score between 0 and 59 then 1 else 0 end) as e
+		from studentcourse,courseinfo
+		where courseinfo.courseid = studentcourse.courseid
+		and courseinfo.courseid = #{courseid}
+		and courseinfo.teacherid = #{teacherid}
+	</select>
+	
+</mapper>
