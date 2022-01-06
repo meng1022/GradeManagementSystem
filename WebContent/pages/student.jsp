@@ -235,8 +235,7 @@ h1 {
     <span class="nav-indicator"></span>
 </nav></div>
 <div>
-<h1 class="one">Dear student 💜</h1>
-<h1 class="one">Welcome to you 💜</h1>
+<h1 class="one">Dear student, welcome</h1>
 </div>
 
 <body>
