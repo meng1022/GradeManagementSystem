@@ -123,8 +123,7 @@ h1 {
 	<span class="nav-indicator"></span>
 </nav></div>
 <div>
-<h1 class="one">Dear administrator 💜</h1>
-<h1 class="one">Welcome to you 💜</h1>
+<h1 class="one">Dear administrator, Welcome</h1>
 </div>
 
 
